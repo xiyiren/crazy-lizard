@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>塔罗占卜 · Tarot</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+  <!-- html2canvas -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/animations.css">
+</head>
+<body>
+
+  <!-- Starfield background -->
+  <canvas id="starfield"></canvas>
+
+  <!-- Navigation -->
+  <nav id="nav" class="hidden">
+    <div class="nav-inner">
+      <a class="nav-brand" data-screen="welcome" data-i18n="nav.home">塔罗占卜</a>
+      <div class="nav-links">
+        <a class="nav-link" data-screen="history" data-i18n="nav.history">历史记录</a>
+        <button class="nav-link lang-btn" id="langToggle">EN</button>
+      </div>
+    </div>
+  </nav>
+
+  <main id="main">
+
+    <!-- Welcome -->
+    <section id="screen-welcome" class="screen active">
+      <div class="welcome-container">
+        <div class="welcome-symbol">✧</div>
+        <h1 class="welcome-title" data-i18n="welcome.title">塔罗占卜</h1>
+        <p class="welcome-subtitle" data-i18n="welcome.subtitle">探索你的命运之路</p>
+        <p class="welcome-desc" data-i18n="welcome.desc">静下心来，聆听内心深处的回响</p>
+        <button class="btn btn-gold btn-lg" id="btnStart" data-i18n="welcome.start">开始占卜</button>
+      </div>
+    </section>
+
+    <!-- Language Selection -->
+    <section id="screen-language" class="screen">
+      <div class="lang-container">
+        <h2 class="section-title" data-i18n="language.title">选择语言</h2>
+        <p class="section-desc" data-i18n="language.desc">Choose your preferred language</p>
+        <div class="lang-options">
+          <button class="card card-lang" data-lang="zh">
+            <span class="lang-icon">🀄</span>
+            <span class="lang-name">中文</span>
+            <span class="lang-sub" data-i18n="language.chinese">简体中文</span>
+          </button>
+          <button class="card card-lang" data-lang="en">
+            <span class="lang-icon">🔮</span>
+            <span class="lang-name">English</span>
+            <span class="lang-sub" data-i18n="language.english">English</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Spread Selection -->
+    <section id="screen-spread" class="screen">
+      <div class="spread-container">
+        <h2 class="section-title" data-i18n="spread.title">选择牌阵</h2>
+        <p class="section-desc" data-i18n="spread.desc">Choose your spread</p>
+        <div class="spread-options">
+          <button class="card card-spread" data-spread="past-present-future">
+            <div class="spread-visual">
+              <span class="spread-dot past"></span>
+              <span class="spread-line"></span>
+              <span class="spread-dot present"></span>
+              <span class="spread-line"></span>
+              <span class="spread-dot future"></span>
+            </div>
+            <h3 class="spread-name" data-i18n="spread.ppf">过去 · 现在 · 未来</h3>
+            <p class="spread-desc" data-i18n="spread.ppfDesc">了解时间线上的能量流转</p>
+          </button>
+          <button class="card card-spread" data-spread="body-mind-spirit">
+            <div class="spread-visual">
+              <span class="spread-dot body"></span>
+              <span class="spread-line"></span>
+              <span class="spread-dot mind"></span>
+              <span class="spread-line"></span>
+              <span class="spread-dot spirit"></span>
+            </div>
+            <h3 class="spread-name" data-i18n="spread.bms">身 · 心 · 灵</h3>
+            <p class="spread-desc" data-i18n="spread.bmsDesc">探索你存在的不同层面</p>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Wizard Questions -->
+    <section id="screen-wizard" class="screen">
+      <div class="wizard-container">
+        <div class="wizard-header">
+          <div class="progress-bar" id="progressBar">
+            <div class="progress-fill" id="progressFill"></div>
+          </div>
+          <div class="progress-text">
+            <span id="stepCurrent">1</span>/<span id="stepTotal">5</span>
+          </div>
+        </div>
+
+        <div class="wizard-question" id="wizardQuestion">
+          <h3 class="question-text" id="questionText"></h3>
+        </div>
+
+        <div class="wizard-options" id="wizardOptions">
+          <!-- Options rendered by JS -->
+        </div>
+
+        <div class="wizard-nav">
+          <button class="btn btn-outline" id="btnWizardPrev" data-i18n="wizard.prev">上一题</button>
+          <button class="btn btn-gold" id="btnWizardNext" data-i18n="wizard.next">下一步</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Shuffle Animation -->
+    <section id="screen-shuffle" class="screen">
+      <div class="shuffle-container">
+        <p class="shuffle-text" data-i18n="shuffle.text">命运之轮正在转动...</p>
+        <div class="shuffle-deck" id="shuffleDeck">
+          <!-- Cards rendered by JS -->
+        </div>
+        <p class="shuffle-hint" data-i18n="shuffle.hint">感受卡牌的能量</p>
+      </div>
+    </section>
+
+    <!-- Card Draw & Flip -->
+    <section id="screen-draw" class="screen">
+      <div class="draw-container">
+        <p class="draw-text" data-i18n="draw.text">你的牌已经到来...</p>
+        <div class="draw-slots" id="drawSlots">
+          <!-- 3 card slots rendered by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Result / Interpretation -->
+    <section id="screen-result" class="screen">
+      <div class="result-container" id="resultContainer">
+        <h2 class="section-title result-title" data-i18n="result.title">你的占卜结果</h2>
+
+        <div class="result-cards" id="resultCards">
+          <!-- Rendered by JS -->
+        </div>
+
+        <div class="result-summary" id="resultSummary">
+          <!-- Rendered by JS -->
+        </div>
+
+        <div class="result-actions">
+          <button class="btn btn-gold" id="btnSave" data-i18n="result.save">保存记录</button>
+          <button class="btn btn-outline" id="btnDownload" data-i18n="result.download">保存为图片</button>
+          <button class="btn btn-ghost" id="btnNew" data-i18n="result.new">重新占卜</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- History -->
+    <section id="screen-history" class="screen">
+      <div class="history-container">
+        <h2 class="section-title" data-i18n="history.title">占卜历史</h2>
+        <div id="historyList">
+          <!-- Rendered by JS -->
+        </div>
+        <div class="history-empty" id="historyEmpty">
+          <div class="empty-icon">✧</div>
+          <p data-i18n="history.empty">暂无占卜记录</p>
+          <button class="btn btn-gold" data-screen="welcome" data-i18n="history.startNew">开始新的占卜</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Modal Overlay -->
+  <div id="modalOverlay" class="modal-overlay hidden">
+    <div class="modal-content" id="modalContent">
+      <button class="modal-close" id="modalClose">✕</button>
+      <div id="modalBody"></div>
+    </div>
+  </div>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
