@@ -38,26 +38,61 @@
     <!-- Welcome -->
     <section id="screen-welcome" class="screen active">
       <div class="welcome-container">
+        <!-- Arch finials -->
+        <div class="welcome-arch-left"></div>
+        <div class="welcome-arch-right"></div>
+
+        <!-- Lanterns -->
+        <div class="welcome-lantern-left">
+          <div class="lantern-line"></div>
+          <div class="lantern-body"></div>
+        </div>
+        <div class="welcome-lantern-right">
+          <div class="lantern-line"></div>
+          <div class="lantern-body"></div>
+        </div>
+
         <div class="welcome-symbol">✧</div>
         <h1 class="welcome-title" data-i18n="welcome.title">塔罗占卜</h1>
         <p class="welcome-subtitle" data-i18n="welcome.subtitle">探索你的命运之路</p>
+        <div class="ornate-divider">
+          <span class="divider-diamond"></span>
+          <span class="divider-dot"></span>
+          <span class="divider-diamond"></span>
+        </div>
         <p class="welcome-desc" data-i18n="welcome.desc">静下心来，聆听内心深处的回响</p>
         <button class="btn btn-gold btn-lg" id="btnStart" data-i18n="welcome.start">开始占卜</button>
+
+        <!-- Bottom decorative band -->
+        <div class="welcome-band">
+          <span class="band-line"></span>
+          <span class="band-diamond"></span>
+          <span class="band-line"></span>
+        </div>
       </div>
     </section>
 
     <!-- Language Selection -->
     <section id="screen-language" class="screen">
-      <div class="lang-container">
+      <div class="lang-container ornate-frame">
+        <span class="corner-tl"></span><span class="corner-tr"></span>
+        <span class="corner-bl"></span><span class="corner-br"></span>
+        <span class="corner-tl-inner"></span><span class="corner-tr-inner"></span>
+        <span class="corner-bl-inner"></span><span class="corner-br-inner"></span>
         <h2 class="section-title" data-i18n="language.title">选择语言</h2>
         <p class="section-desc" data-i18n="language.desc">Choose your preferred language</p>
+        <div class="ornate-divider">
+          <span class="divider-diamond"></span>
+          <span class="divider-dot"></span>
+          <span class="divider-diamond"></span>
+        </div>
         <div class="lang-options">
-          <button class="card card-lang" data-lang="zh">
+          <button class="card-lang" data-lang="zh">
             <span class="lang-icon">🀄</span>
             <span class="lang-name">中文</span>
             <span class="lang-sub" data-i18n="language.chinese">简体中文</span>
           </button>
-          <button class="card card-lang" data-lang="en">
+          <button class="card-lang" data-lang="en">
             <span class="lang-icon">🔮</span>
             <span class="lang-name">English</span>
             <span class="lang-sub" data-i18n="language.english">English</span>
@@ -68,11 +103,20 @@
 
     <!-- Spread Selection -->
     <section id="screen-spread" class="screen">
-      <div class="spread-container">
+      <div class="spread-container ornate-frame">
+        <span class="corner-tl"></span><span class="corner-tr"></span>
+        <span class="corner-bl"></span><span class="corner-br"></span>
+        <span class="corner-tl-inner"></span><span class="corner-tr-inner"></span>
+        <span class="corner-bl-inner"></span><span class="corner-br-inner"></span>
         <h2 class="section-title" data-i18n="spread.title">选择牌阵</h2>
         <p class="section-desc" data-i18n="spread.desc">Choose your spread</p>
+        <div class="ornate-divider">
+          <span class="divider-diamond"></span>
+          <span class="divider-dot"></span>
+          <span class="divider-diamond"></span>
+        </div>
         <div class="spread-options">
-          <button class="card card-spread" data-spread="past-present-future">
+          <button class="card-spread" data-spread="past-present-future">
             <div class="spread-visual">
               <span class="spread-dot past"></span>
               <span class="spread-line"></span>
@@ -80,10 +124,10 @@
               <span class="spread-line"></span>
               <span class="spread-dot future"></span>
             </div>
-            <h3 class="spread-name" data-i18n="spread.ppf">过去 · 现在 · 未来</h3>
-            <p class="spread-desc" data-i18n="spread.ppfDesc">了解时间线上的能量流转</p>
+            <span class="spread-name" data-i18n="spread.ppf">过去 · 现在 · 未来</span>
+            <span class="spread-desc" data-i18n="spread.ppfDesc">了解时间线上的能量流转</span>
           </button>
-          <button class="card card-spread" data-spread="body-mind-spirit">
+          <button class="card-spread" data-spread="body-mind-spirit">
             <div class="spread-visual">
               <span class="spread-dot body"></span>
               <span class="spread-line"></span>
@@ -91,8 +135,8 @@
               <span class="spread-line"></span>
               <span class="spread-dot spirit"></span>
             </div>
-            <h3 class="spread-name" data-i18n="spread.bms">身 · 心 · 灵</h3>
-            <p class="spread-desc" data-i18n="spread.bmsDesc">探索你存在的不同层面</p>
+            <span class="spread-name" data-i18n="spread.bms">身 · 心 · 灵</span>
+            <span class="spread-desc" data-i18n="spread.bmsDesc">探索你存在的不同层面</span>
           </button>
         </div>
       </div>
@@ -100,7 +144,11 @@
 
     <!-- Wizard Questions -->
     <section id="screen-wizard" class="screen">
-      <div class="wizard-container">
+      <div class="wizard-container ornate-frame">
+        <span class="corner-tl"></span><span class="corner-tr"></span>
+        <span class="corner-bl"></span><span class="corner-br"></span>
+        <span class="corner-tl-inner"></span><span class="corner-tr-inner"></span>
+        <span class="corner-bl-inner"></span><span class="corner-br-inner"></span>
         <div class="wizard-header">
           <div class="progress-bar" id="progressBar">
             <div class="progress-fill" id="progressFill"></div>
@@ -169,7 +217,11 @@
 
     <!-- History -->
     <section id="screen-history" class="screen">
-      <div class="history-container">
+      <div class="history-container ornate-frame">
+        <span class="corner-tl"></span><span class="corner-tr"></span>
+        <span class="corner-bl"></span><span class="corner-br"></span>
+        <span class="corner-tl-inner"></span><span class="corner-tr-inner"></span>
+        <span class="corner-bl-inner"></span><span class="corner-br-inner"></span>
         <h2 class="section-title" data-i18n="history.title">占卜历史</h2>
         <div id="historyList">
           <!-- Rendered by JS -->

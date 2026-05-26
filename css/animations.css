@@ -1,14 +1,14 @@
-/* ===== Animations ===== */
+/* ===== Animations - Ornate Style ===== */
 
-/* Glow pulse */
-@keyframes glow {
-  0%, 100% { opacity: 0.6; text-shadow: 0 0 10px var(--color-gold-glow); }
-  50% { opacity: 1; text-shadow: 0 0 30px var(--color-gold-glow), 0 0 60px var(--color-gold-glow); }
+/* Gold glow pulse (used on title, symbol) */
+@keyframes glowPulse {
+  0%, 100% { opacity: 0.7; filter: drop-shadow(0 0 10px var(--color-gold-glow)) brightness(0.9); }
+  50% { opacity: 1; filter: drop-shadow(0 0 30px var(--color-gold-glow)) brightness(1.1); }
 }
 
-@keyframes glow-strong {
-  0%, 100% { box-shadow: 0 0 15px var(--color-gold-glow); }
-  50% { box-shadow: 0 0 30px var(--color-gold-glow), 0 0 60px var(--color-gold-glow); }
+@keyframes glowStrong {
+  0%, 100% { box-shadow: 0 0 20px var(--color-gold-glow); }
+  50% { box-shadow: 0 0 40px var(--color-gold-glow), 0 0 80px rgba(212, 165, 116, 0.1); }
 }
 
 /* Fade In */
@@ -27,13 +27,13 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Scale in */
+/* Scale in with glow */
 @keyframes scaleIn {
-  from { opacity: 0; transform: scale(0.8); }
+  from { opacity: 0; transform: scale(0.85); }
   to { opacity: 1; transform: scale(1); }
 }
 
-/* Shuffle card fly */
+/* Shuffle card fly with rotation */
 @keyframes shuffleFly {
   0% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
   50% { transform: translate(var(--fx), var(--fy)) rotate(var(--fr)); opacity: 1; }
@@ -49,21 +49,54 @@
 
 /* Twinkle for stars */
 @keyframes twinkle {
-  0%, 100% { opacity: var(--star-opacity, 0.5); }
+  0%, 100% { opacity: var(--star-opacity, 0.4); }
   50% { opacity: 1; }
 }
 
-/* ----- Screen Transition Classes ----- */
-
-.screen {
-  animation: none;
+/* Text pulse for shuffle hint */
+@keyframes textPulse {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 0.7; }
 }
+
+/* Gold shimmer sweep - for ornate elements */
+@keyframes goldShimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+/* Subtle float for lanterns */
+@keyframes floatLantern {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+.welcome-lantern-left .lantern-body,
+.welcome-lantern-right .lantern-body {
+  animation: floatLantern 4s ease-in-out infinite;
+}
+.welcome-lantern-right .lantern-body {
+  animation-delay: 1.5s;
+}
+
+/* ----- Screen Transitions ----- */
+
+.screen { animation: none; }
 
 .screen.active {
   animation: fadeIn 0.5s ease forwards;
 }
 
+/* Option cards entrance */
+.card-option {
+  opacity: 0;
+  animation: scaleIn 0.35s ease forwards;
+}
+
 /* Shuffle card animation */
+.shuffle-card {
+  opacity: 0;
+}
 .shuffle-card.animating {
   animation: shuffleFly 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
 }
@@ -77,37 +110,20 @@
 .result-card-item {
   opacity: 0;
 }
-
 .result-card-item.visible {
   animation: fadeInUp 0.6s ease forwards;
 }
-
 .result-card-item:nth-child(1).visible { animation-delay: 0s; }
-.result-card-item:nth-child(2).visible { animation-delay: 0.3s; }
-.result-card-item:nth-child(3).visible { animation-delay: 0.6s; }
+.result-card-item:nth-child(2).visible { animation-delay: 0.25s; }
+.result-card-item:nth-child(3).visible { animation-delay: 0.5s; }
 
 /* Result summary */
 .result-summary.visible {
   animation: fadeInUp 0.6s ease forwards;
-  animation-delay: 0.9s;
+  animation-delay: 0.8s;
 }
 
-/* History item */
+/* History items */
 .history-item.visible {
   animation: fadeInUp 0.4s ease forwards;
-}
-
-/* Option cards in wizard */
-.card-option.visible {
-  animation: scaleIn 0.3s ease forwards;
-}
-
-/* Shuffle hint text */
-@keyframes textPulse {
-  0%, 100% { opacity: 0.4; }
-  50% { opacity: 0.8; }
-}
-
-.shuffle-hint {
-  animation: textPulse 2s ease-in-out infinite;
 }
