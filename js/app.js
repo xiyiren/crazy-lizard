@@ -1,10 +1,5 @@
 // ===== App: State, Routing, Event Handling, Rendering =====
 
-import { t } from './i18n.js';
-import { CARDS, SPREADS, QUESTIONS, SUITS } from './data.js';
-import { drawCards, generateId } from './card-engine.js';
-import { saveReading, getHistory, deleteReading, exportImage } from './storage.js';
-
 // ===== State =====
 
 const state = {
@@ -471,9 +466,6 @@ function renderResult() {
     const cardEl = document.createElement('div');
     cardEl.className = 'tarot-card flipped';
     cardEl.style.margin = '0 auto';
-    cardEl.style.width = '180px';
-    cardEl.style.height = '270px';
-
     const inner = document.createElement('div');
     inner.className = 'tarot-card-inner';
 
@@ -658,7 +650,7 @@ function showHistoryDetail(reading) {
       : (reading.lang === 'zh' ? card.upZh : card.upEn);
 
     html += `<div class="result-card-item visible">`;
-    html += `<div class="tarot-card flipped" style="margin:0 auto;width:160px;height:240px;pointer-events:none">`;
+    html += `<div class="tarot-card flipped" style="margin:0 auto;pointer-events:none">`;
     html += `<div class="tarot-card-inner">`;
     html += `<div class="tarot-card-face tarot-card-back">${generateCardBackSVG()}</div>`;
     html += `<div class="tarot-card-face tarot-card-front">${generateCardFrontSVG(card, reading.lang)}</div>`;

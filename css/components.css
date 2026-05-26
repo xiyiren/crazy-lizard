@@ -112,6 +112,8 @@
   transition: all var(--transition-base);
   position: relative;
   overflow: hidden;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .btn:active { transform: scale(0.97); }
@@ -189,6 +191,7 @@
   z-index: 1;
   display: none;
   min-height: 100vh;
+  min-height: 100dvh;
   padding: var(--space-xl) var(--space-lg);
   padding-top: 80px;
 }
@@ -421,6 +424,8 @@
   cursor: pointer;
   transition: all var(--transition-base);
   position: relative;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .card-lang::before, .card-spread::before {
@@ -572,6 +577,8 @@
   background: linear-gradient(160deg, rgba(26,14,18,0.6), rgba(20,10,14,0.8));
   transition: all var(--transition-base);
   position: relative;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .card-option::before {
@@ -968,6 +975,8 @@
   cursor: pointer;
   transition: all var(--transition-base);
   position: relative;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .history-item::before {
@@ -1083,33 +1092,170 @@
   box-shadow: 0 0 15px var(--color-gold-glow);
 }
 
-/* ===== Responsive ===== */
-
-@media (max-width: 1024px) {
-  .result-cards {
-    gap: var(--space-lg);
-  }
-}
+/* ===== Responsive - Mobile & Tablet ===== */
 
 @media (max-width: 768px) {
+  /* Welcome */
   .welcome-container::before,
   .welcome-container::after { display: none; }
+  .welcome-arch-left, .welcome-arch-right { display: none; }
   .welcome-lantern-left, .welcome-lantern-right { display: none; }
   .welcome-title { font-size: 2.2rem; }
+  .welcome-container { padding: var(--space-xl) var(--space-md); }
+  .welcome-symbol { font-size: 2.2rem; }
+  .welcome-symbol::before,
+  .welcome-symbol::after { display: none; }
+  .welcome-desc { margin-bottom: var(--space-lg); }
+  .welcome-band { bottom: var(--space-md); }
 
+  /* Screen */
+  .screen { padding: var(--space-lg) var(--space-md); padding-top: 70px; }
+
+  /* Frames */
+  .ornate-frame { padding: var(--space-md); }
+
+  /* Language & Spread */
   .lang-options, .spread-options {
     flex-direction: column;
     align-items: center;
   }
   .card-lang, .card-spread { max-width: 100%; width: 100%; }
 
+  /* Nav - keep horizontal */
+  .nav-inner { flex-direction: row; flex-wrap: wrap; gap: var(--space-sm); }
+  .nav-brand { font-size: 0.95rem; }
+  .nav-links { gap: var(--space-md); }
+
+  /* Buttons */
+  .btn-lg { padding: 14px 40px; }
+  .btn { min-height: 44px; }
+
+  /* Wizard */
   .wizard-options { grid-template-columns: 1fr; }
-  .draw-slots { flex-direction: column; align-items: center; }
-  .result-cards { grid-template-columns: 1fr; }
+  .wizard-container { padding: var(--space-md); }
 
+  /* Cards - smaller */
+  .tarot-card { width: 160px; height: 240px; }
+
+  /* Draw */
+  .draw-slots { flex-direction: column; align-items: center; gap: var(--space-lg); }
+
+  /* Result */
+  .result-cards {
+    grid-template-columns: 1fr;
+    gap: var(--space-xl);
+  }
+  .result-card-item { flex-direction: column; width: 100%; }
+  .interp-text { max-width: 100%; }
   .result-actions { flex-direction: column; align-items: center; }
-  .result-actions .btn { width: 100%; max-width: 300px; }
+  .result-actions .btn { width: 100%; max-width: 320px; }
 
-  .nav-inner { flex-direction: column; gap: var(--space-sm); }
+  /* Modal */
+  .modal-content { padding: var(--space-lg) var(--space-md); }
+
+  /* Shuffle */
+  .shuffle-deck { width: 170px; height: 240px; }
+  .shuffle-card { width: 170px; height: 240px; }
+
+  /* History */
   .history-item { flex-direction: column; gap: var(--space-sm); text-align: center; }
+  .history-item-info h4 { font-size: 0.85rem; }
+
+  /* Result summary */
+  .result-summary { padding: var(--space-md); }
+  .result-summary h3 { font-size: 0.85rem; }
+  .result-summary p { font-size: 0.82rem; }
+}
+
+@media (max-width: 480px) {
+  /* Base font scaling */
+  :root { font-size: 13px; }
+  .section-title { font-size: 1.1rem; }
+  .welcome-title { font-size: 1.6rem; letter-spacing: 0.12em; }
+  .welcome-subtitle { font-size: 0.8rem; }
+  .welcome-subtitle::before,
+  .welcome-subtitle::after { display: none; }
+
+  /* Container padding */
+  .welcome-container { padding: var(--space-lg) var(--space-sm); }
+  .screen { padding: var(--space-lg) var(--space-sm); padding-top: 60px; }
+
+  /* Cards - phone size */
+  .tarot-card { width: 120px; height: 180px; }
+
+  /* Buttons - full width touch targets */
+  .btn { padding: 12px 20px; min-height: 44px; font-size: 0.82rem; }
+  .btn-lg { padding: 12px 28px; font-size: 0.85rem; min-height: 44px; }
+
+  /* Nav */
+  #nav { padding: var(--space-xs) var(--space-sm); }
+  .nav-brand { font-size: 0.8rem; letter-spacing: 0.08em; }
+  .nav-link { font-size: 0.72rem; }
+  .lang-btn { font-size: 0.65rem; padding: 2px 8px; min-height: 28px; }
+
+  /* Wizard */
+  .question-text { font-size: 1rem; }
+  .card-option { padding: var(--space-sm) var(--space-md); }
+  .option-text { font-size: 0.85rem; }
+  .wizard-header { margin-bottom: var(--space-lg); }
+  .progress-text { font-size: 0.7rem; }
+
+  /* Shuffle */
+  .shuffle-text { font-size: 0.95rem; }
+  .shuffle-deck { width: 120px; height: 170px; }
+  .shuffle-card { width: 120px; height: 170px; }
+  .shuffle-card-inner { font-size: 1.4rem; }
+
+  /* Draw */
+  .draw-text { font-size: 0.95rem; }
+
+  /* Result */
+  .result-title { font-size: 1.2rem; }
+  .result-cards { gap: var(--space-lg); }
+  .interp-card-name { font-size: 0.85rem; }
+  .interp-meaning { font-size: 0.78rem; }
+  .interp-keywords { font-size: 0.72rem; }
+  .interp-orientation { font-size: 0.6rem; padding: 2px 10px; }
+  .position-label { font-size: 0.65rem; }
+  .position-desc { font-size: 0.7rem; }
+  .result-summary { padding: var(--space-sm); }
+  .result-summary h3 { font-size: 0.8rem; }
+  .result-summary p { font-size: 0.78rem; }
+
+  /* Modal */
+  .modal-content { padding: var(--space-md); }
+  .modal-overlay { padding: var(--space-sm); }
+  .modal-close { width: 30px; height: 30px; font-size: 0.85rem; }
+
+  /* History */
+  .history-container { padding: var(--space-sm) 0; }
+  .history-item { padding: var(--space-sm) var(--space-md); }
+  .history-item-info h4 { font-size: 0.8rem; }
+  .history-item-info p { font-size: 0.7rem; }
+  .history-card-mini { width: 22px; height: 34px; font-size: 0.4rem; }
+  .empty-icon { font-size: 2rem; }
+
+  /* Tarot card position text */
+  .tarot-card-position { margin-top: var(--space-sm); }
+}
+
+/* Touch optimization */
+@media (hover: none) and (pointer: coarse) {
+  .card-lang:hover, .card-spread:hover,
+  .card-option:hover, .history-item:hover {
+    transform: none;
+  }
+  .card-lang:active, .card-spread:active,
+  .card-option:active {
+    transform: translateY(-1px);
+  }
+  .btn:active { transform: scale(0.96); }
+}
+
+/* Small phones */
+@media (max-width: 360px) {
+  .tarot-card { width: 100px; height: 150px; }
+  .welcome-title { font-size: 1.3rem; }
+  .welcome-symbol { font-size: 1.8rem; }
+  .section-title { font-size: 1rem; }
 }

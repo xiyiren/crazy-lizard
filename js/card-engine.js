@@ -1,7 +1,5 @@
 // ===== Card Engine: Seeded RNG & Drawing =====
 
-import { CARDS, SPREADS } from './data.js';
-
 // DJB2 hash: string -> 32-bit integer
 function djb2(str) {
   let hash = 5381;
@@ -56,4 +54,3 @@ function generateId() {
   return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
 }
 
-export { drawCards, generateId };

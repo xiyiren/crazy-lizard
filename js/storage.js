@@ -92,4 +92,3 @@ function exportImage(elementId, filename = 'tarot-reading.png') {
   });
 }
 
-export { saveReading, getHistory, deleteReading, clearHistory, exportImage };

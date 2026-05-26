@@ -412,4 +412,3 @@ const QUESTIONS = [
   },
 ];
 
-export { CARDS, SPREADS, QUESTIONS, SUITS, ARANA };

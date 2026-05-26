@@ -151,4 +151,3 @@ function t(key, lang) {
   return obj;
 }
 
-export { TRANSLATIONS, t };
