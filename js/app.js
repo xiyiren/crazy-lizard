@@ -24,6 +24,7 @@ function initStarfield() {
   const canvas = $('starfield');
   const ctx = canvas.getContext('2d');
   let stars = [];
+  let embers = [];
   let animId;
 
   function resize() {
@@ -45,9 +46,23 @@ function initStarfield() {
     }
   }
 
+  function spawnEmber() {
+    embers.push({
+      x: Math.random() * canvas.width,
+      y: canvas.height + Math.random() * 60,
+      r: Math.random() * 2 + 0.8,
+      speed: Math.random() * 0.4 + 0.08,
+      drift: Math.random() * 0.4 - 0.2,
+      opacity: Math.random() * 0.45 + 0.15,
+      phase: Math.random() * Math.PI * 2,
+    });
+  }
+
   function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     const now = Date.now() * 0.001;
+
+    // Draw twinkling stars
     for (const s of stars) {
       const flicker = Math.sin(now * s.speed * 10 + s.phase) * 0.3 + 0.7;
       const alpha = s.a * flicker;
@@ -56,6 +71,33 @@ function initStarfield() {
       ctx.fillStyle = `rgba(245, 230, 208, ${alpha})`;
       ctx.fill();
     }
+
+    // Maintain ember count
+    const maxEmbers = window.innerWidth < 480 ? 6 : 12;
+    if (embers.length < maxEmbers && Math.random() < 0.08) spawnEmber();
+
+    // Draw & update rising gold embers
+    for (let i = embers.length - 1; i >= 0; i--) {
+      const e = embers[i];
+      e.y -= e.speed;
+      e.x += Math.sin(now * 0.5 + e.phase) * e.drift;
+      e.opacity -= 0.002;
+
+      if (e.opacity <= 0 || e.y < -20) {
+        embers.splice(i, 1);
+        continue;
+      }
+
+      ctx.beginPath();
+      ctx.arc(e.x, e.y, e.r, 0, Math.PI * 2);
+      const grad = ctx.createRadialGradient(e.x, e.y, 0, e.x, e.y, e.r * 3);
+      grad.addColorStop(0, `rgba(255, 210, 160, ${e.opacity})`);
+      grad.addColorStop(0.4, `rgba(212, 165, 116, ${e.opacity * 0.5})`);
+      grad.addColorStop(1, `rgba(212, 165, 116, 0)`);
+      ctx.fillStyle = grad;
+      ctx.fill();
+    }
+
     animId = requestAnimationFrame(draw);
   }
 
@@ -71,92 +113,30 @@ function initStarfield() {
   return () => cancelAnimationFrame(animId);
 }
 
-// ===== SVG Card Generator =====
-
-function getSuitSymbol(suit) {
-  const symbols = {
-    wands: `<path d="M10 28 L10 4 L12 2 L14 4 L14 28 Z M8 8 L16 8 M6 14 L18 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>`,
-    cups: `<path d="M12 6 C8 6 6 10 6 14 C6 20 10 24 12 26 C14 24 18 20 18 14 C18 10 16 6 12 6 Z M12 26 L12 30 M8 30 L16 30" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>`,
-    swords: `<path d="M12 2 L12 26 M8 8 L16 8 M6 14 L18 14 M10 20 L14 20 M10 26 L14 30" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>`,
-    pentacles: `<circle cx="12" cy="16" r="10" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 8 L13 14 L19 14 L14 18 L16 24 L12 20 L8 24 L10 18 L5 14 L11 14 Z" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>`,
-  };
-  return symbols[suit] || '';
-}
-
-function getMajorSymbol(rank) {
-  const icons = [
-    `<circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 4 L12 12 L18 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>`, // 0 Fool
-    `<path d="M8 24 L12 8 L16 24 M6 16 L18 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>`, // 1 Magician
-    `<path d="M12 4 C6 4 4 12 4 20 L20 20 C20 12 18 4 12 4 Z" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="14" r="3" fill="none" stroke="currentColor" stroke-width="1"/>`, // 2 High Priestess
-    `<path d="M12 4 L12 20 M4 12 L20 12 M8 20 L8 28 M16 20 L16 28" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="12" cy="12" r="6" fill="none" stroke="currentColor" stroke-width="1"/>`, // 3 Empress
-    `<path d="M8 6 L12 2 L16 6 L16 12 L8 12 Z M6 12 L18 12 L18 28 L6 28 Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>`, // 4 Emperor
-    `<path d="M12 4 L12 28 M4 12 L20 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="12" cy="16" r="4" fill="none" stroke="currentColor" stroke-width="1"/>`, // 5 Hierophant
-    `<circle cx="8" cy="14" r="5" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="16" cy="14" r="5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 19 C10 24 14 24 16 19" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>`, // 6 Lovers
-    `<path d="M6 24 L12 4 L18 24 Z M8 14 L16 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>`, // 7 Chariot
-    `<circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 6 L12 12 L16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>`, // 8 Strength
-    `<path d="M12 2 L12 12 M8 8 L12 12 L16 8 M4 18 C4 26 20 26 20 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>`, // 9 Hermit
-    `<circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1"/><path d="M12 2 L12 4 M12 20 L12 22 M2 12 L4 12 M20 12 L22 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>`, // 10 Wheel
-    `<path d="M12 4 L12 28 M4 12 L8 12 M16 12 L20 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M8 8 L12 12 L8 16" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round"/>`, // 11 Justice
-    `<path d="M12 2 L12 16 M4 10 L12 16 L20 10 M8 22 L16 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>`, // 12 Hanged Man
-    `<path d="M6 26 L12 4 L18 26 Z M4 14 L20 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>`, // 13 Death
-    `<path d="M4 16 C4 8 20 8 20 16 M12 16 L12 28 M8 22 L16 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>`, // 14 Temperance
-    `<path d="M12 4 L12 16 M6 10 L18 10 M4 18 L8 26 M20 18 L16 26 M6 22 L18 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>`, // 15 Devil
-    `<path d="M12 2 L12 28 M4 8 L20 8 M4 14 L20 14 M4 20 L20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>`, // 16 Tower
-    `<path d="M12 4 L12 28 M4 12 L8 12 M16 12 L20 12 M8 8 L12 12 M16 8 L12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>`, // 17 Star
-    `<circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 6 C8 6 6 12 12 18 C18 12 16 6 12 6" fill="none" stroke="currentColor" stroke-width="1"/>`, // 18 Moon
-    `<circle cx="12" cy="10" r="7" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M6 18 C6 26 18 26 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M10 24 L14 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>`, // 19 Sun
-    `<path d="M12 2 L12 28 M4 8 L20 8 M4 14 L20 14 M4 20 L20 20 M4 26 L20 26" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>`, // 20 Judgement
-    `<circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="5" fill="none" stroke="currentColor" stroke-width="1"/><path d="M12 2 L12 4 M12 20 L12 22 M2 12 L4 12 M20 12 L22 12 M5 5 L7 7 M17 17 L19 19 M5 19 L7 17 M17 7 L19 5" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round"/>`, // 21 World
-  ];
-  return icons[rank] || `<circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.5"/>`;
-}
-
-function getRankDisplay(rank, arcana) {
-  if (arcana === 'major') {
-    const roman = ['O','I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII','XIII','XIV','XV','XVI','XVII','XVIII','XIX','XX','XXI'];
-    return roman[rank] || rank;
-  }
-  const court = { 11: 'Page', 12: 'Knight', 13: 'Queen', 14: 'King' };
-  return court[rank] || rank;
-}
-
-function generateCardFrontSVG(card, lang) {
-  const isMajor = card.arcana === 'major';
-  const name = lang === 'zh' ? card.nameZh : card.nameEn;
-  const rankDisplay = isMajor ? getRankDisplay(card.rank, card.arcana) : getRankDisplay(card.rank, card.arcana);
-  const color = isMajor ? '#D4A574' : (card.suit === 'wands' ? '#E06040' : card.suit === 'cups' ? '#4080C0' : card.suit === 'swords' ? '#C0C040' : '#60A060');
-
-  const symbol = isMajor
-    ? getMajorSymbol(card.rank)
-    : getSuitSymbol(card.suit);
-
-  const suitInitial = card.suit ? card.suit[0].toUpperCase() : '';
-
-  return `<svg viewBox="0 0 24 36" xmlns="http://www.w3.org/2000/svg">
-    <rect width="24" height="36" rx="1.5" fill="url(#bg-${card.id})" stroke="${color}" stroke-width="0.3"/>
-    <defs>
-      <linearGradient id="bg-${card.id}" x1="0" y1="0" x2="24" y2="36" gradientUnits="userSpaceOnUse">
-        <stop offset="0%" stop-color="#1a1a2e"/>
-        <stop offset="100%" stop-color="#2a1a1a"/>
-      </linearGradient>
-    </defs>
-    <text x="1.5" y="3.5" font-size="2.5" fill="${color}" font-family="Cinzel,serif" font-weight="600">${isMajor ? '' : rankDisplay}</text>
-    <text x="1.5" y="5.5" font-size="1.8" fill="${color}" opacity="0.6">${isMajor ? '' : suitInitial}</text>
-    <g transform="translate(0, 6)" stroke="${color}">
-      ${symbol}
-    </g>
-    <text x="12" y="33" font-size="1.5" fill="${color}" text-anchor="middle" font-family="Cinzel,serif" opacity="0.7">${isMajor ? rankDisplay : ''}</text>
-  </svg>`;
-}
+// ===== SVG Card Back Generator =====
+// Card front generator is in card-art.js (loaded after app.js to override)
 
 function generateCardBackSVG() {
   return `<svg viewBox="0 0 24 36" xmlns="http://www.w3.org/2000/svg">
-    <rect width="24" height="36" rx="1.5" fill="#1a0a0a" stroke="#b8864e" stroke-width="0.3"/>
-    <circle cx="12" cy="18" r="8" fill="none" stroke="#b8864e" stroke-width="0.4" opacity="0.6"/>
-    <circle cx="12" cy="18" r="5" fill="none" stroke="#b8864e" stroke-width="0.3" opacity="0.4"/>
-    <circle cx="12" cy="18" r="2" fill="#b8864e" opacity="0.3"/>
-    <path d="M12 8 L14 14 L20 14 L15 18 L17 24 L12 20 L7 24 L9 18 L4 14 L10 14 Z" fill="none" stroke="#b8864e" stroke-width="0.3" opacity="0.4"/>
-    <path d="M4 4 L8 4 M16 4 L20 4 M4 32 L8 32 M16 32 L20 32" stroke="#b8864e" stroke-width="0.3" opacity="0.3"/>
+    <defs>
+      <radialGradient id="backBg" cx="50%" cy="50%" r="55%">
+        <stop offset="0%" stop-color="#2a1010"/>
+        <stop offset="100%" stop-color="#1a0808"/>
+      </radialGradient>
+    </defs>
+    <rect width="24" height="36" rx="1.5" fill="url(#backBg)" stroke="#b8864e" stroke-width="0.35"/>
+    <rect x="1" y="1" width="22" height="34" rx="1" fill="none" stroke="#b8864e" stroke-width="0.12" opacity="0.5"/>
+    <rect x="2.5" y="2.5" width="19" height="31" fill="none" stroke="#b8864e" stroke-width="0.08" opacity="0.25"/>
+    <path d="M3 3 L4.5 3 L4.5 4.5" fill="none" stroke="#b8864e" stroke-width="0.25" opacity="0.6" stroke-linecap="round"/>
+    <path d="M21 3 L19.5 3 L19.5 4.5" fill="none" stroke="#b8864e" stroke-width="0.25" opacity="0.6" stroke-linecap="round"/>
+    <path d="M3 33 L4.5 33 L4.5 31.5" fill="none" stroke="#b8864e" stroke-width="0.25" opacity="0.6" stroke-linecap="round"/>
+    <path d="M21 33 L19.5 33 L19.5 31.5" fill="none" stroke="#b8864e" stroke-width="0.25" opacity="0.6" stroke-linecap="round"/>
+    <circle cx="12" cy="18" r="7" fill="none" stroke="#b8864e" stroke-width="0.2" opacity="0.35"/>
+    <circle cx="12" cy="18" r="5" fill="none" stroke="#b8864e" stroke-width="0.15" opacity="0.25"/>
+    <circle cx="12" cy="18" r="3" fill="none" stroke="#b8864e" stroke-width="0.1" opacity="0.2"/>
+    <path d="M12 10 L13 17 L20 18 L13 19 L12 26 L11 19 L4 18 L11 17 Z" fill="none" stroke="#b8864e" stroke-width="0.2" opacity="0.35"/>
+    <path d="M12 16 L14 18 L12 20 L10 18 Z" fill="#b8864e" opacity="0.15"/>
+    <circle cx="12" cy="18" r="0.6" fill="#b8864e" opacity="0.4"/>
   </svg>`;
 }
 
@@ -327,8 +307,12 @@ function startShuffleAnimation() {
   deck.innerHTML = '';
   const cards = [];
 
-  // Create 24 shuffle cards
-  for (let i = 0; i < 24; i++) {
+  // Fewer cards on mobile for performance
+  const isMobile = window.innerWidth < 480;
+  const cardCount = isMobile ? 12 : 24;
+
+  // Create shuffle cards
+  for (let i = 0; i < cardCount; i++) {
     const div = document.createElement('div');
     div.className = 'shuffle-card';
     div.innerHTML = `<div class="shuffle-card-inner">✧</div>`;
@@ -343,16 +327,18 @@ function startShuffleAnimation() {
   // Animate cards flying
   cards.forEach((c, i) => {
     const angle = Math.random() * Math.PI * 2;
-    const dist = 80 + Math.random() * 120;
-    const dur = 0.8 + Math.random() * 0.6;
+    const dist = isMobile ? 40 + Math.random() * 60 : 80 + Math.random() * 120;
+    const dur = isMobile ? 0.5 + Math.random() * 0.3 : 0.8 + Math.random() * 0.6;
     c.style.setProperty('--fx', `${Math.cos(angle) * dist}px`);
     c.style.setProperty('--fy', `${Math.sin(angle) * dist}px`);
     c.style.setProperty('--fr', `${Math.random() * 360 - 180}deg`);
+    c.style.opacity = '1';
     c.style.animation = `shuffleFly ${dur}s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards`;
-    c.style.animationDelay = `${i * 0.04}s`;
+    c.style.animationDelay = `${i * (isMobile ? 0.03 : 0.04)}s`;
   });
 
-  // After animation, draw cards
+  // After animation, draw cards — faster on mobile
+  const delay = isMobile ? 2000 : 3200;
   setTimeout(() => {
     // Generate the reading
     const drawn = drawCards(state.spread, state.answers);
@@ -367,7 +353,7 @@ function startShuffleAnimation() {
 
     goToScreen('draw');
     startDrawAnimation();
-  }, 3200);
+  }, delay);
 }
 
 // ===== Draw Animation =====
@@ -379,6 +365,13 @@ function startDrawAnimation() {
 
   const spread = SPREADS[state.spread];
   if (!spread) return;
+
+  // Mobile: faster animation
+  const isMobile = window.innerWidth < 480;
+  const flyDelay = isMobile ? 200 : 400;
+  const flipStart = isMobile ? 600 : 1200;
+  const flipStagger = isMobile ? 300 : 600;
+  const totalDelay = isMobile ? 2200 : 4000;
 
   // Create 3 card slots with face-down cards
   state.reading.cards.forEach((draw, i) => {
@@ -426,19 +419,19 @@ function startDrawAnimation() {
       slot.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
       slot.style.opacity = '1';
       slot.style.transform = 'translateY(0)';
-    }, i * 400);
+    }, i * flyDelay);
 
     // Staggered flip after all cards are in
     setTimeout(() => {
       cardEl.classList.add('flipped');
-    }, 1200 + i * 600);
+    }, flipStart + i * flipStagger);
   });
 
   // After all flips, go to result
   setTimeout(() => {
     goToScreen('result');
     renderResult();
-  }, 4000);
+  }, totalDelay);
 }
 
 // ===== Render: Result =====

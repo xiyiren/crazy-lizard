@@ -314,7 +314,7 @@
   font-size: 2.8rem;
   color: var(--color-gold);
   margin-bottom: var(--space-lg);
-  animation: glowPulse 3s ease-in-out infinite;
+  animation: glowPulse 3s ease-in-out infinite, scaleIn 0.6s ease forwards;
   position: relative;
   display: inline-block;
 }
@@ -342,6 +342,9 @@
     0 0 30px rgba(212, 165, 116, 0.3),
     0 2px 4px rgba(0,0,0,0.5),
     0 4px 8px rgba(0,0,0,0.3);
+  opacity: 0;
+  animation: fadeInUp 0.6s ease forwards;
+  animation-delay: 0.15s;
 }
 
 /* Welcome subtitle with decorative wraps */
@@ -352,6 +355,9 @@
   margin-bottom: var(--space-xs);
   position: relative;
   display: inline-block;
+  opacity: 0;
+  animation: fadeInUp 0.6s ease forwards;
+  animation-delay: 0.3s;
 }
 
 .welcome-subtitle::before,
@@ -367,6 +373,21 @@
   margin-bottom: var(--space-xl);
   letter-spacing: 0.08em;
   font-style: italic;
+  opacity: 0;
+  animation: fadeInUp 0.6s ease forwards;
+  animation-delay: 0.6s;
+}
+
+.welcome-container .ornate-divider {
+  opacity: 0;
+  animation: fadeIn 0.6s ease forwards;
+  animation-delay: 0.45s;
+}
+
+#btnStart {
+  opacity: 0;
+  animation: fadeInUp 0.6s ease forwards;
+  animation-delay: 0.75s;
 }
 
 /* Bottom decorative band */
@@ -714,6 +735,16 @@
   height: 300px;
   perspective: 1000px;
   cursor: default;
+  /* GPU layer for smoother flip on mobile */
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  transition: box-shadow var(--transition-base), transform var(--transition-base);
+}
+.tarot-card.flipped {
+  box-shadow: 0 0 30px var(--color-gold-glow);
+}
+.result-card-item .tarot-card.flipped {
+  box-shadow: 0 0 40px var(--color-gold-glow), 0 4px 30px var(--color-primary-glow);
 }
 
 .tarot-card-inner {
@@ -721,11 +752,16 @@
   width: 100%;
   height: 100%;
   transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
   transition: transform 0.8s cubic-bezier(0.4, 0.0, 0.2, 1);
+  /* Mobile: avoid flicker on 3D transforms */
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 
 .tarot-card.flipped .tarot-card-inner {
   transform: rotateY(180deg);
+  -webkit-transform: rotateY(180deg);
 }
 
 .tarot-card-face {
@@ -735,6 +771,11 @@
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
   overflow: hidden;
+}
+
+.tarot-card-front {
+  -webkit-transform: rotateY(180deg);
+  transform: rotateY(180deg);
 }
 
 .tarot-card-back {
@@ -820,10 +861,52 @@
   margin-bottom: var(--space-xl);
 }
 
+/* Connecting line between result cards (desktop only) */
+@media (min-width: 769px) {
+  .result-cards {
+    position: relative;
+  }
+  .result-cards::before {
+    content: '';
+    position: absolute;
+    top: 150px;
+    left: calc(16.666% + 10px);
+    right: calc(16.666% + 10px);
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      var(--color-gold-dark) 15%,
+      var(--color-gold) 50%,
+      var(--color-gold-dark) 85%,
+      transparent
+    );
+    opacity: 0.2;
+    pointer-events: none;
+  }
+  .result-cards::after {
+    content: '◇ ◇ ◇';
+    position: absolute;
+    top: 140px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.5rem;
+    letter-spacing: 24px;
+    color: var(--color-gold);
+    opacity: 0.2;
+    pointer-events: none;
+  }
+}
+
 .result-card-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  position: relative;
+  transition: transform var(--transition-base);
+}
+.result-card-item:hover {
+  transform: translateY(-4px);
+}
+@media (hover: none) and (pointer: coarse) {
+  .result-card-item:hover { transform: none; }
 }
 
 .result-card-item .tarot-card {
@@ -900,7 +983,7 @@
   text-align: center;
   max-width: 720px;
   margin: 0 auto var(--space-xl);
-  padding: var(--space-lg);
+  padding: var(--space-xl) var(--space-lg);
   border: 1px solid var(--color-border);
   background: linear-gradient(160deg, rgba(26,14,18,0.6), rgba(16,10,12,0.8));
   position: relative;
@@ -912,6 +995,17 @@
   top: 3px; left: 3px; right: 3px; bottom: 3px;
   border: 1px solid var(--color-border-glow);
   pointer-events: none;
+}
+
+.result-summary::after {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 20%;
+  right: 20%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--color-gold), transparent);
+  opacity: 0.3;
 }
 
 .result-summary h3 {
@@ -934,6 +1028,14 @@
   gap: var(--space-md);
   flex-wrap: wrap;
 }
+
+.result-actions .btn {
+  opacity: 0;
+  animation: fadeInUp 0.5s ease forwards;
+}
+.result-actions .btn:nth-child(1) { animation-delay: 1.2s; }
+.result-actions .btn:nth-child(2) { animation-delay: 1.4s; }
+.result-actions .btn:nth-child(3) { animation-delay: 1.6s; }
 
 /* ----- History Screen ----- */
 
@@ -1094,15 +1196,31 @@
 
 /* ===== Responsive - Mobile & Tablet ===== */
 
+/* Fluid card sizing: scales smoothly between breakpoints */
+.tarot-card {
+  width: clamp(100px, 28vw, 200px);
+  height: clamp(150px, 42vw, 300px);
+}
+
+/* Shuffle deck scales with the card */
+.shuffle-deck {
+  width: clamp(120px, 28vw, 200px);
+  height: clamp(170px, 42vw, 280px);
+}
+.shuffle-card {
+  width: clamp(120px, 28vw, 200px);
+  height: clamp(170px, 42vw, 280px);
+}
+
 @media (max-width: 768px) {
   /* Welcome */
   .welcome-container::before,
   .welcome-container::after { display: none; }
   .welcome-arch-left, .welcome-arch-right { display: none; }
   .welcome-lantern-left, .welcome-lantern-right { display: none; }
-  .welcome-title { font-size: 2.2rem; }
+  .welcome-title { font-size: 2rem; }
   .welcome-container { padding: var(--space-xl) var(--space-md); }
-  .welcome-symbol { font-size: 2.2rem; }
+  .welcome-symbol { font-size: 2rem; }
   .welcome-symbol::before,
   .welcome-symbol::after { display: none; }
   .welcome-desc { margin-bottom: var(--space-lg); }
@@ -1122,20 +1240,18 @@
   .card-lang, .card-spread { max-width: 100%; width: 100%; }
 
   /* Nav - keep horizontal */
-  .nav-inner { flex-direction: row; flex-wrap: wrap; gap: var(--space-sm); }
-  .nav-brand { font-size: 0.95rem; }
-  .nav-links { gap: var(--space-md); }
+  #nav { padding: var(--space-sm) var(--space-md); }
+  .nav-inner { flex-direction: row; flex-wrap: nowrap; gap: var(--space-sm); }
+  .nav-brand { font-size: 0.9rem; white-space: nowrap; }
+  .nav-links { gap: var(--space-sm); flex-shrink: 0; }
 
   /* Buttons */
-  .btn-lg { padding: 14px 40px; }
-  .btn { min-height: 44px; }
+  .btn-lg { padding: 14px 36px; }
+  .btn, .btn-lg { min-height: 44px; }
 
   /* Wizard */
   .wizard-options { grid-template-columns: 1fr; }
   .wizard-container { padding: var(--space-md); }
-
-  /* Cards - smaller */
-  .tarot-card { width: 160px; height: 240px; }
 
   /* Draw */
   .draw-slots { flex-direction: column; align-items: center; gap: var(--space-lg); }
@@ -1151,11 +1267,7 @@
   .result-actions .btn { width: 100%; max-width: 320px; }
 
   /* Modal */
-  .modal-content { padding: var(--space-lg) var(--space-md); }
-
-  /* Shuffle */
-  .shuffle-deck { width: 170px; height: 240px; }
-  .shuffle-card { width: 170px; height: 240px; }
+  .modal-content { padding: var(--space-lg) var(--space-md); margin: var(--space-sm); max-height: 90vh; }
 
   /* History */
   .history-item { flex-direction: column; gap: var(--space-sm); text-align: center; }
@@ -1171,17 +1283,14 @@
   /* Base font scaling */
   :root { font-size: 13px; }
   .section-title { font-size: 1.1rem; }
-  .welcome-title { font-size: 1.6rem; letter-spacing: 0.12em; }
+  .welcome-title { font-size: 1.5rem; letter-spacing: 0.1em; }
   .welcome-subtitle { font-size: 0.8rem; }
   .welcome-subtitle::before,
   .welcome-subtitle::after { display: none; }
 
   /* Container padding */
   .welcome-container { padding: var(--space-lg) var(--space-sm); }
-  .screen { padding: var(--space-lg) var(--space-sm); padding-top: 60px; }
-
-  /* Cards - phone size */
-  .tarot-card { width: 120px; height: 180px; }
+  .screen { padding: var(--space-lg) var(--space-sm); padding-top: 56px; }
 
   /* Buttons - full width touch targets */
   .btn { padding: 12px 20px; min-height: 44px; font-size: 0.82rem; }
@@ -1189,7 +1298,7 @@
 
   /* Nav */
   #nav { padding: var(--space-xs) var(--space-sm); }
-  .nav-brand { font-size: 0.8rem; letter-spacing: 0.08em; }
+  .nav-brand { font-size: 0.78rem; letter-spacing: 0.06em; }
   .nav-link { font-size: 0.72rem; }
   .lang-btn { font-size: 0.65rem; padding: 2px 8px; min-height: 28px; }
 
@@ -1197,13 +1306,12 @@
   .question-text { font-size: 1rem; }
   .card-option { padding: var(--space-sm) var(--space-md); }
   .option-text { font-size: 0.85rem; }
+  .option-label { font-size: 0.75rem; }
   .wizard-header { margin-bottom: var(--space-lg); }
   .progress-text { font-size: 0.7rem; }
 
   /* Shuffle */
   .shuffle-text { font-size: 0.95rem; }
-  .shuffle-deck { width: 120px; height: 170px; }
-  .shuffle-card { width: 120px; height: 170px; }
   .shuffle-card-inner { font-size: 1.4rem; }
 
   /* Draw */
@@ -1224,7 +1332,7 @@
 
   /* Modal */
   .modal-content { padding: var(--space-md); }
-  .modal-overlay { padding: var(--space-sm); }
+  .modal-overlay { padding: var(--space-xs); }
   .modal-close { width: 30px; height: 30px; font-size: 0.85rem; }
 
   /* History */
@@ -1239,7 +1347,7 @@
   .tarot-card-position { margin-top: var(--space-sm); }
 }
 
-/* Touch optimization */
+/* Touch optimization: prevent sticky hover, smoother touch feedback */
 @media (hover: none) and (pointer: coarse) {
   .card-lang:hover, .card-spread:hover,
   .card-option:hover, .history-item:hover {
@@ -1248,14 +1356,56 @@
   .card-lang:active, .card-spread:active,
   .card-option:active {
     transform: translateY(-1px);
+    border-color: var(--color-gold);
   }
   .btn:active { transform: scale(0.96); }
+
+  /* Remove hover borders on touch (they stick) */
+  .card-lang::before, .card-spread::before,
+  .card-option::before { border-color: transparent !important; }
 }
 
 /* Small phones */
 @media (max-width: 360px) {
-  .tarot-card { width: 100px; height: 150px; }
   .welcome-title { font-size: 1.3rem; }
-  .welcome-symbol { font-size: 1.8rem; }
+  .welcome-symbol { font-size: 1.6rem; }
   .section-title { font-size: 1rem; }
+  .screen { padding-top: 50px; }
+  .welcome-container { padding: var(--space-md) var(--space-xs); }
+
+  /* Override card clamp values for very small screens */
+  .tarot-card { width: 90px; height: 135px; }
+  .shuffle-deck { width: 90px; height: 135px; }
+  .shuffle-card { width: 90px; height: 135px; }
+}
+
+/* Landscape phone: show cards in a row */
+@media (max-height: 500px) and (orientation: landscape) {
+  .draw-slots {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .tarot-card { width: 120px; height: 180px; }
+  .screen { padding-top: 54px; padding-bottom: var(--space-md); }
+  .welcome-container { padding: var(--space-md); }
+  .welcome-title { font-size: 1.5rem; }
+  .welcome-symbol { font-size: 1.5rem; margin-bottom: var(--space-md); }
+  .welcome-desc { margin-bottom: var(--space-md); }
+}
+
+/* Ensure result card items don't overflow */
+@media (max-width: 600px) {
+  .result-card-item .interp-text {
+    max-width: 100%;
+    width: 100%;
+  }
+}
+
+/* Improve modal scroll on mobile */
+@media (max-height: 600px) {
+  .modal-content {
+    max-height: 95vh;
+    padding: var(--space-md);
+  }
 }
